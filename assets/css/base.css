@@ -10,17 +10,21 @@ a {
 
 ul {
     list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
 .container {
-    width: calc(100%-120px);
+    width: calc(100% - 120px);
     margin: auto;
 
 }
 
 .row {
     display: flex;
+    justify-content: space-around;
+    align-items: center;
     flex-wrap: wrap;
-    justify-content: space-between;
 
 }
