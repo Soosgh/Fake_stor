@@ -28,21 +28,23 @@ const displayCategories = async () => {
 
 
 
-const getProduct = async () => {
-
-    const { data } = await axios.get('https://dummyjson.com/products');
+const getProduct = async (page) => {
+    const skip = (page - 1) * 10;
+    const { data } = await axios.get(`https://dummyjson.com/products?limit=10&skip=  ${skip}`);
 
     console.log(data)
 
     return data;
 }
 
-const displayProduct = async () => {
+const displayProduct = async (page = 1) => {
     const loader = document.querySelector(".loader_container");
     loader.classList.add("active");
     try {
-        const { products } = await getProduct();
-        const result = products.map((product) => {
+        const data = await getProduct(page);
+        const numberOfPages = Math.ceil(data.total / 10);
+        console.log(numberOfPages);
+        const result = data.products.map((product) => {
             return ` <div class="product">
         
         <img src='${product.thumbnail}' alt="${product.description}"/>
@@ -54,6 +56,21 @@ const displayProduct = async () => {
 
 
         document.querySelector('.products .row').innerHTML = result;
+        let paginationLink = "";
+        if (page == 1) {
+            paginationLink += `  <li class="page-item"><button class="page-link" href="#">&laquo;</button></li>`;
+        } else {
+            paginationLink += `<li class="page-item"><button onclick=displayProduct('${page}') class="page-link" >&laquo;</button></li>`;
+        }
+
+        for (let i = 1; i <= numberOfPages; i++) {
+            paginationLink += `<li class="page-item"><button onclick=displayProduct('${i}') class="page-link" >${i}</button></li>`;
+
+        }
+        paginationLink += ` <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>  `;
+        console.log(paginationLink);
+        document.querySelector(".pagination-container .pagination").innerHTML = paginationLink;
+
     }
     catch (error) {
         document.querySelector('.categories .row').innerHTML = "<p> Error loading Categories";
